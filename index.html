@@ -192,6 +192,9 @@ button:hover {
 let confettiInterval;
 
 function launchFlipbook() {
+    const video = document.querySelector('.cover-video');
+    video.muted = false;  // unmute
+    video.volume = 1;     // set full volume
     // Hide button and ribbon
     document.getElementById('openBtn').style.display = 'none';
     document.getElementById('ribbon').style.display = 'none';
@@ -233,4 +236,5 @@ function createConfetti() {
 </script>
 </body>
 </html>
+
 
