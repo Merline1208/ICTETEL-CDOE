@@ -9,10 +9,10 @@ body {
     margin: 0;
     font-family: 'Arial', sans-serif;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100vh;
     flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
     overflow: hidden;
     position: relative;
 }
@@ -59,10 +59,11 @@ body::after {
     transition: all 0.5s ease;
 }
 
+/* Container for cover video and button */
 .container {
     position: relative;
     display: flex;
-    flex-direction: column; /* Stack video and button */
+    flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: 30px;
@@ -71,10 +72,12 @@ body::after {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     background: linear-gradient(145deg, #fff1f0, #fcefee);
     max-width: 800px;
+    width: 90%;
     z-index: 2;
-    transition: all 0.5s ease;
+    transition: all 1s ease;
 }
-/* Video styling */
+
+/* Cover video */
 .cover-video {
     width: 100%;
     max-width: 600px;
@@ -82,20 +85,9 @@ body::after {
     height: auto;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    margin-bottom: 20px; /* space between video and button */
-    object-fit: cover;   /* maintain aspect ratio and cover box */
-}
-
-/* Cover image */
-.cover-image {
-    width: 100%;
-    max-width: 600px;
-    max-height: 400px;
-    height: auto;
-    object-fit: contain;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     margin-bottom: 20px;
+    object-fit: cover;
+    transition: transform 1s ease, opacity 1s ease;
 }
 
 /* Button */
@@ -109,7 +101,6 @@ button {
     cursor: pointer;
     transition: transform 0.3s, background 0.3s;
 }
-
 button:hover {
     background-color: #e67e22;
     transform: scale(1.05);
@@ -119,12 +110,12 @@ button:hover {
 .full-flipbook {
     width: 100vw;
     height: 100vh;
-    max-width: 100%;
-    max-height: 100%;
     border: none;
     border-radius: 0;
     padding: 0;
     margin: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
 }
 
 /* Confetti */
@@ -137,49 +128,31 @@ button:hover {
     pointer-events: none;
     animation: fall 3s linear infinite;
 }
-
 @keyframes fall {
     0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
-/* Media Queries for smaller devices */
-@media screen and (max-width: 768px) {
-    .container {
-        margin-top: 30px;
-        padding: 15px;
-    }
-    .cover-video {
-        max-width: 100%;
-        max-height: 300px;
-    }
-    button {
-        padding: 10px 25px;
-        font-size: 0.9rem;
-    }
-}
 
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .container { margin-top: 30px; padding: 15px; }
+    .cover-video { max-height: 300px; }
+    button { padding: 10px 25px; font-size: 0.9rem; }
+}
 @media screen and (max-width: 480px) {
-    .container {
-        margin-top: 20px;
-        padding: 10px;
-    }
-    .cover-video {
-        max-width: 100%;
-        max-height: 200px;
-    }
-    button {
-        padding: 8px 20px;
-        font-size: 0.85rem;
-    }
+    .container { margin-top: 20px; padding: 10px; }
+    .cover-video { max-height: 200px; }
+    button { padding: 8px 20px; font-size: 0.85rem; }
 }
 </style>
 </head>
 <body>
-<div class="ribbon" id="ribbon">🎀 ICTETL - 2025 Souvenir 🎀</div>
+
+<div class="ribbon" id="ribbon">🎀 ICTETL 2025 Souvenir 🎀</div>
 
 <div class="container" id="container">
     <!-- Video Cover -->
-    <video class="cover-video" autoplay muted loop playsinline>
+    <video class="cover-video" autoplay muted loop playsinline controls>
         <source src="cover_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -192,35 +165,47 @@ button:hover {
 let confettiInterval;
 
 function launchFlipbook() {
-    const video = document.querySelector('.cover-video');
-    video.muted = false;  // unmute
-    video.volume = 1;     // set full volume
-    // Hide button and ribbon
-    document.getElementById('openBtn').style.display = 'none';
-    document.getElementById('ribbon').style.display = 'none';
-
-    // Make container full width/height
     const container = document.getElementById('container');
-    container.style.width = '100vw';
-    container.style.height = '100vh';
-    container.style.margin = '0';
-    container.style.borderRadius = '0';
-    container.style.padding = '0';
-    container.style.display = 'flex';
-    container.style.justifyContent = 'center';
-    container.style.alignItems = 'center';
+    const video = document.querySelector('.cover-video');
 
-    // Remove previous content
-    container.innerHTML = '';
+    // Unmute video on user click
+    video.muted = false;
+    video.volume = 1;
 
-    // Add flipbook iframe
-    const flipbook = document.createElement('iframe');
-    flipbook.src = "https://heyzine.com/flip-book/c9c3576f6b.html"; // Replace with your flipbook URL
-    flipbook.classList.add('full-flipbook');
-    container.appendChild(flipbook);
+    // Animate cover video zoom out
+    video.style.transform = 'scale(0.5)';
+    video.style.opacity = '0';
 
-    // Start continuous confetti
-    confettiInterval = setInterval(createConfetti, 200);
+    // Fade out ribbon and button
+    document.getElementById('ribbon').style.opacity = '0';
+    document.getElementById('openBtn').style.opacity = '0';
+
+    // After animation, load flipbook
+    setTimeout(() => {
+        container.style.width = '100vw';
+        container.style.height = '100vh';
+        container.style.margin = '0';
+        container.style.borderRadius = '0';
+        container.style.padding = '0';
+        container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+
+        // Clear container content
+        container.innerHTML = '';
+
+        // Add flipbook iframe
+        const flipbook = document.createElement('iframe');
+        flipbook.src = "https://heyzine.com/flip-book/c9c3576f6b.html"; // Replace with your flipbook link
+        flipbook.classList.add('full-flipbook');
+        container.appendChild(flipbook);
+
+        // Fade in flipbook
+        setTimeout(() => flipbook.style.opacity = '1', 50);
+
+        // Start continuous confetti
+        confettiInterval = setInterval(createConfetti, 200);
+    }, 1000); // match animation duration
 }
 
 function createConfetti() {
@@ -234,7 +219,6 @@ function createConfetti() {
     setTimeout(() => confetti.remove(), 4000);
 }
 </script>
+
 </body>
 </html>
-
-
