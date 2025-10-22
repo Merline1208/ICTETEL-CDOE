@@ -160,6 +160,10 @@ button:hover {
     <!-- Open button -->
     <button id="openBtn" onclick="launchFlipbook()">Open Souvenir</button>
 </div>
+    <audio id="bgMusic" loop>
+    <source src="background_music.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 
 <script>
 let confettiInterval;
@@ -167,10 +171,13 @@ let confettiInterval;
 function launchFlipbook() {
     const container = document.getElementById('container');
     const video = document.querySelector('.cover-video');
+    const music = document.getElementById('bgMusic');
 
-    // Unmute video on user click
+    // Unmute video and music
     video.muted = false;
     video.volume = 1;
+    music.volume = 0.5;      // adjust volume
+    music.play();             // start playing
 
     // Animate cover video zoom out
     video.style.transform = 'scale(0.5)';
@@ -208,6 +215,7 @@ function launchFlipbook() {
     }, 1000); // match animation duration
 }
 
+
 function createConfetti() {
     const confetti = document.createElement('div');
     confetti.classList.add('confetti');
@@ -222,3 +230,4 @@ function createConfetti() {
 
 </body>
 </html>
+
